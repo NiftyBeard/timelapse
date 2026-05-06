@@ -5,80 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NiftyBeard Cam Dashboard</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --green: #33691e;
-    --teal: #3c9ea7;
-    --lime: #91c02c;
-    --black: #000000;
-    --gold: #f0c418;
+    --accent1: #703030;
+    --accent2: #563516;
+    --accent3: #38380e;
+    --accent4: #1a3519;
+    --accent5: #012f25;
+    --accent6: #00262c;
+    --accent7: #0c1d28;
+    --accent8: #14141e;
+    --accent9: #100a10;
+    --black:   #000000;
   }
 
   body {
     margin: 0;
-    font-family: "Inter", sans-serif;
-    background: var(--teal);
-    color: white;
+    font-family: "Roboto", sans-serif;
+    background: var(--black);
+    color: #e0e0e0;
   }
 
   header {
-    padding: 20px;
+    padding: 24px;
     text-align: center;
-    background: linear-gradient(90deg, var(--lime), var(--gold));
-    color: white;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    background: var(--accent8);
+    color: #e8e8e8;
+    font-size: 1.8rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--accent7);
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: auto;
     padding: 20px;
   }
 
-  .live-section {
-    background: var(--lime);
+  .section {
+    background: var(--accent9);
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(240,196,24,0.2);
+    border-radius: 10px;
+    border: 1px solid var(--accent7);
     margin-bottom: 40px;
   }
 
-  .live-section h2 {
+  .section h2 {
     margin-top: 0;
-    color: var(--gold);
-    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--accent5);
+    font-size: 1.4rem;
   }
 
   .live-stream {
     width: 100%;
-    border-radius: 12px;
-    border: 3px solid var(--teal);
-  }
-
-  .gallery-section h2 {
-    color: var(--black);
-    font-size: 1.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent6);
   }
 
   .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
     margin-top: 20px;
   }
 
   .gallery-grid img {
     width: 100%;
-    border-radius: 10px;
-    border: 2px solid var(--green);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 6px;
+    border: 1px solid var(--accent7);
+    transition: opacity 0.2s ease;
   }
 
   .gallery-grid img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px var(--gold);
+    opacity: 0.8;
   }
 </style>
 </head>
@@ -89,14 +91,12 @@
 
 <div class="container">
 
-  <!-- LIVE STREAM -->
-  <section class="live-section">
+  <section class="section">
     <h2>Live Stream</h2>
     <img class="live-stream" src="https://cam.niftybeard.com/?action=stream">
   </section>
 
-  <!-- TIMELAPSE GALLERY -->
-  <section class="gallery-section">
+  <section class="section">
     <h2>Timelapse Gallery</h2>
     <div id="gallery" class="gallery-grid"></div>
   </section>
@@ -106,7 +106,6 @@
 <script>
 const gallery = document.getElementById("gallery");
 
-// Replace with your repo info
 const owner = "NiftyBeard";
 const repo = "timelapse";
 const path = "snapshots";
@@ -123,7 +122,6 @@ fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`)
     });
   });
 </script>
-
 
 </body>
 </html>
