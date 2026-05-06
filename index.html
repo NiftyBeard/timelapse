@@ -104,23 +104,26 @@
 </div>
 
 <script>
-  // Auto-load all images in /snapshots/
-  fetch('snapshots/')
-    .then(r => r.text())
-    .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const links = [...doc.querySelectorAll('a')];
+const gallery = document.getElementById("gallery");
 
-      links.forEach(link => {
-        if (link.href.endsWith('.jpg')) {
-          const img = document.createElement('img');
-          img.src = link.href;
-          document.getElementById('gallery').appendChild(img);
-        }
-      });
+// Replace with your repo info
+const owner = "NiftyBeard";
+const repo = "timelapse";
+const path = "snapshots";
+
+fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`)
+  .then(r => r.json())
+  .then(files => {
+    files.forEach(file => {
+      if (file.name.endsWith(".jpg")) {
+        const img = document.createElement("img");
+        img.src = file.download_url;
+        gallery.appendChild(img);
+      }
     });
+  });
 </script>
+
 
 </body>
 </html>
