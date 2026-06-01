@@ -105,37 +105,130 @@
 
 <div id="player"></div>
 
+<style>
+  #player-container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+    font-family: sans-serif;
+  }
+
+  #timelapse-img {
+    width: 100%;
+    border-radius: 6px;
+    background: #000;
+  }
+
+  #controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  #scrubber {
+    width: 100%;
+  }
+</style>
+
+<div id="player-container">
+  <img id="timelapse-img" />
+
+  <input type="range" id="scrubber" min="0" max="0" value="0">
+
+  <div id="controls">
+    <button id="play">Play</button>
+    <button id="pause">Pause</button>
+
+    <label>
+      Speed:
+      <select id="speed">
+        <option value="50">20 FPS</option>
+        <option value="100" selected>10 FPS</option>
+        <option value="200">5 FPS</option>
+        <option value="500">2 FPS</option>
+      </select>
+    </label>
+
+    <button id="fullscreen">Fullscreen</button>
+  </div>
+</div>
+
 <script>
 const owner = "NiftyBeard";
 const repo = "timelapse";
 const path = "snapshots";
 
-const player = document.getElementById("player");
-const img = document.createElement("img");
-img.style.width = "100%";
-player.appendChild(img);
+const container = document.getElementById("player-container");
+const img = document.getElementById("timelapse-img");
+const scrubber = document.getElementById("scrubber");
+const playBtn = document.getElementById("play");
+const pauseBtn = document.getElementById("pause");
+const speedSelect = document.getElementById("speed");
+const fullscreenBtn = document.getElementById("fullscreen");
+
+let urls = [];
+let index = 0;
+let timer = null;
+
+function startPlayback() {
+  stopPlayback();
+  timer = setInterval(nextFrame, Number(speedSelect.value));
+}
+
+function stopPlayback() {
+  if (timer) clearInterval(timer);
+  timer = null;
+}
+
+function nextFrame() {
+  img.src = urls[index];
+  scrubber.value = index;
+  index = (index + 1) % urls.length;
+}
+
+function goToFrame(i) {
+  index = i;
+  img.src = urls[index];
+}
+
+playBtn.onclick = startPlayback;
+pauseBtn.onclick = stopPlayback;
+
+speedSelect.onchange = () => {
+  if (timer) startPlayback();
+};
+
+scrubber.oninput = (e) => {
+  stopPlayback();
+  goToFrame(Number(e.target.value));
+};
+
+// --- FULLSCREEN HANDLER ---
+fullscreenBtn.onclick = () => {
+  if (!document.fullscreenElement) {
+    container.requestFullscreen?.() || container.webkitRequestFullscreen?.();
+  } else {
+    document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+  }
+};
 
 fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`)
   .then(r => r.json())
   .then(files => {
-    // Filter JPGs
-    let images = files
+    urls = files
       .filter(f => f.name.endsWith(".jpg"))
-      .sort((a, b) => a.name.localeCompare(b.name)); // ensure correct order
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(f => f.download_url);
 
-    // Preload
-    const urls = images.map(f => f.download_url);
-    let index = 0;
-
-    function showNext() {
-      img.src = urls[index];
-      index = (index + 1) % urls.length; // loop forever
-    }
-
-    // Start playback at 10 FPS (adjust as needed)
-    setInterval(showNext, 100);
+    scrubber.max = urls.length - 1;
+    img.src = urls[0];
   });
 </script>
+
   
 </body>
 </html>
